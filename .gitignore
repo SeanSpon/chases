@@ -4,3 +4,5 @@ dist/
 .env
 settings.json
 shopping-browser/
+purchase-history.json
+*.tmp

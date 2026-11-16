@@ -1,17 +1,32 @@
-AUTOCART FOR CHASE — WINDOWS PREVIEW
+AUTOCART FOR CHASE — VERSION 0.2.0
 
-1. Open https://github.com/SeanSpon/chases/releases/latest
-2. Under Assets, download AutoCart-Setup-0.1.1.exe.
-3. Open the installer and follow the setup prompts.
-4. Install Chrome or Edge if neither is installed.
-5. Open AutoCart, add a product link, and click Start watching.
-6. Close the window. AutoCart keeps watching in the system tray.
-7. Right-click the tray icon to open, stop watching, or quit.
+DOWNLOAD: https://github.com/SeanSpon/chases/releases/latest
+Under Assets, download AutoCart-Setup-0.2.0.exe and run it.
+Requires Windows x64 and Chrome or Edge. Installer is unsigned.
+Private repo: Sean can download the installer and send it to you.
 
-Keep the computer awake and connected to the internet.
-This private repository requires GitHub access; Sean can send you the installer instead.
-The installer is unsigned.
+1. Open AutoCart and click HOW TO USE THIS at the top.
+2. Paste all your product links, one per line. Click Add links.
+3. Set your maximum item price, total budget and total number of items.
+4. Watch-only spends NOTHING. Leave Auto-buy off if you only want alerts.
+5. For real orders, click Set up auto-buy beside EACH product.
+6. Open the setup browser. Sign into the store and save your address/payment
+   DIRECTLY WITH THE STORE. AutoCart does not copy your normal browser's cards.
+7. Follow the Pick buttons to teach the product and checkout steps.
+   Picking does not activate a store button. NEVER click Place order yourself
+   during setup. Full step-by-step directions are in the app.
+8. Save setup, then Test without buying. The test never clicks the final order
+   button but DOES add to your real cart. EMPTY THE TEST CART afterward.
+9. Turn on Auto-buy for that product and accept the real-purchase prompt.
+10. Press Start. Closing the window keeps the app in the system tray.
 
-CURRENT LIMITATION: This preview watches stock and sends notifications.
-It does not place real orders. Auto-buy checkout integrations are still pending.
-Do not enter payment details into AutoCart.
+Auto-buy can CHARGE THE PAYMENT METHOD SAVED IN YOUR STORE ACCOUNT.
+One unit per link, once. Exact one-item cart and selected final USD total
+must pass the checks. Correct final-total selection is essential.
+Not all stores work. CAPTCHA, CVV, login or bank approval need you.
+No real retailer has been certified without its links and account setup.
+
+Keep your computer awake and connected. Right-click the tray icon to stop/quit.
+STOP cannot undo an order already submitted.
+In history, UNCERTAIN/SUBMITTING means it may have charged. Check the store.
+The app will not automatically retry those orders, even after restart.
