@@ -35,6 +35,7 @@ $('start').onclick=async()=>{
 };
 $('stop').onclick=async()=>{await window.autocart.stop();running=false;$('start').disabled=false;$('stop').disabled=true;$('overall').textContent='Not running';$('overall').classList.remove('on');render();message('Monitoring stopped.');};
 window.autocart.onEvent(({kind,info})=>{
+ if(kind==='stopped'){running=false;$('start').disabled=false;$('stop').disabled=true;$('overall').textContent='Not running';$('overall').classList.remove('on');render();message('Monitoring stopped from tray.');return;}
  if(kind==='error'){message('Error: '+info);return;}
  if(kind==='status'){const s=$('s-'+info.id);if(s){s.className='status '+info.status;s.textContent=({possible:'Possibly available — check store',out:'Appears sold out',unknown:'Availability unclear',error:'Could not check page'})[info.status]+' · '+new Date(info.checkedAt).toLocaleTimeString();}}
  if(kind==='alert'){

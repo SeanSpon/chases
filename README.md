@@ -1,12 +1,24 @@
-# 🛍️ AutoCart by SeeZee
+# AutoCart for Chase
 
-**Windows desktop restock watcher and safe practice demo.**
+## [Download the Windows installer](https://github.com/SeanSpon/chases/releases/latest)
 
-### Download for Windows
-Open **Actions → AutoCart Windows installer → latest successful run → Artifacts → AutoCart-Windows-Installer**. Download the ZIP, extract it, then double-click the Setup `.exe`.
+Under **Assets**, click **AutoCart-Setup-0.1.1.exe**, then run it.
+The source-code ZIP is for developers. A successful build publishes the installer automatically here.
+If no release is listed yet, check the [build status](https://github.com/SeanSpon/chases/actions).
 
-This is a prototype for **assisted checkout**. It does not automatically purchase or charge anything.
+### What works in this preview
+- Watch product links with Chrome or Edge running invisibly.
+- Close the app window to keep monitoring in the Windows system tray.
+- Receive desktop restock notifications; open the product in your normal browser.
+- Right-click the tray icon to stop watching or quit.
 
-See [the picture-by-picture guide](docs/dashboard-guide.svg) and [Practice Mode guide](docs/practice-guide.svg). For step-by-step setup see [CHASE-START-HERE.txt](CHASE-START-HERE.txt).
+### Auto-buy status
+Real-store checkout integrations have **not been implemented**. The current app cannot place orders.
+The price, budget, and quantity fields are planning preferences only.
+To implement auto-buy we need the specific retailer/product URLs and checkout requirements, with enforced price, total, quantity and duplicate-order limits.
 
-**Important:** Windows installation is not yet independently tested. The installer is unsigned. Real-store status detection is best effort. Never enter credit card information into this app.
+Requires Windows x64, Chrome or Edge, internet, and an awake computer.
+The installer is unsigned and has not been tested on Chase's computer.
+This repository is private: Chase needs access, or Sean can download and send her the installer.
+
+See [setup instructions](CHASE-START-HERE.txt).

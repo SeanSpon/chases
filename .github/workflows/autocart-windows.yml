@@ -3,13 +3,12 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    tags: ['autocart-v*']
   pull_request:
+permissions:
+  contents: read
 jobs:
   windows:
     runs-on: windows-latest
-    permissions:
-      contents: read
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -19,9 +18,9 @@ jobs:
         run: npm install --no-audit --no-fund
       - name: Check scripts
         run: npm run check
-      - name: Run AutoCart unit tests
+      - name: Run unit tests
         run: npm test
-      - name: Build Windows installer
+      - name: Build Windows installer without implicit publishing
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
         run: npm run dist:win
@@ -29,8 +28,25 @@ jobs:
         with:
           name: AutoCart-Windows-Installer
           path: |
-            dist/*.exe
+            dist/AutoCart-Setup-*.exe
             CHASE-START-HERE.txt
-            docs/dashboard-guide.svg
-            docs/practice-guide.svg
           if-no-files-found: error
+  release:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: windows
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: AutoCart-Windows-Installer
+          path: installer
+      - name: Publish installer to GitHub Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          COMMIT: ${{ github.sha }}
+          RUN_NUMBER: ${{ github.run_number }}
+        run: |
+          gh release create "autocart-build-$RUN_NUMBER" installer/dist/*.exe installer/CHASE-START-HERE.txt --target "$COMMIT" --title "AutoCart Windows — build $RUN_NUMBER" --latest --notes "Windows stock-watcher preview. Download AutoCart-Setup-0.1.1.exe below. Closing the window keeps watching in the tray. Real-store automatic purchasing is not implemented in this preview. Requires Chrome or Edge, an awake Windows x64 computer, and repository access. Installer is unsigned."

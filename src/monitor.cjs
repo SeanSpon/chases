@@ -19,7 +19,7 @@ class Monitor{
   if(this.context)return this.context;
   const executablePath=findBrowser();
   if(!executablePath)throw Error('Install Chrome or Edge first.');
-  this.context=await chromium.launchPersistentContext(this.dir,{executablePath,headless:false,viewport:{width:1100,height:850},args:['--no-first-run'],acceptDownloads:false});
+  this.context=await chromium.launchPersistentContext(this.dir,{executablePath,headless:true,viewport:{width:1100,height:850},args:['--no-first-run'],acceptDownloads:false});
   this.context.on('close',()=>{this.context=null;this.stop();});
   return this.context;
  }
