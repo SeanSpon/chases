@@ -6,3 +6,4 @@ settings.json
 shopping-browser/
 purchase-history.json
 *.tmp
+test-results/

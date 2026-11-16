@@ -24,12 +24,15 @@ jobs:
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
         run: npm run dist:win
+      - name: Launch and test the packaged Windows desktop app
+        run: node tests/packaged-smoke.cjs
       - uses: actions/upload-artifact@v4
         with:
           name: AutoCart-Windows-Installer
           path: |
             dist/AutoCart-Setup-*.exe
             CHASE-START-HERE.txt
+            test-results/AutoCart-0.2.0.png
           if-no-files-found: error
   release:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
@@ -49,5 +52,5 @@ jobs:
           COMMIT: ${{ github.sha }}
           RUN_NUMBER: ${{ github.run_number }}
         run: |
-          gh release create "autocart-build-$RUN_NUMBER" installer/dist/*.exe installer/CHASE-START-HERE.txt --target "$COMMIT" --title "AutoCart Windows — build $RUN_NUMBER" --latest --notes "AutoCart 0.2.0 for Windows. Download AutoCart-Setup-0.2.0.exe below. Adds multiple-link entry, in-app directions, click-to-select checkout setup, dry-run testing, opt-in Playwright automatic orders, persistent budget/quantity reservations and duplicate-order locks. Watch-only spends nothing; enabled auto-buy can charge a saved store payment method. Store-specific setup is required; no live retailer has been certified. CAPTCHA/login/verification are not bypassed. Chrome or Edge required. Installer is unsigned."
+          gh release create "autocart-build-$RUN_NUMBER" installer/dist/*.exe installer/CHASE-START-HERE.txt installer/test-results/*.png --target "$COMMIT" --title "AutoCart Windows — build $RUN_NUMBER" --latest --notes "AutoCart 0.2.0 for Windows. Download AutoCart-Setup-0.2.0.exe below. Adds multiple-link entry, in-app directions, click-to-select checkout setup, dry-run testing, opt-in Playwright automatic orders, persistent budget/quantity reservations and duplicate-order locks. Watch-only spends nothing; enabled auto-buy can charge a saved store payment method. Store-specific setup is required; no live retailer has been certified. CAPTCHA/login/verification are not bypassed. Chrome or Edge required. Installer is unsigned."
 

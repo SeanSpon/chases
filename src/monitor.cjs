@@ -21,7 +21,7 @@ class Monitor{
    const executablePath=findBrowser();if(!executablePath)throw Error('Install Chrome or Edge first.');
    const context=await chromium.launchPersistentContext(this.dir,{executablePath,headless:!visible,viewport:{width:1100,height:850},args:['--no-first-run'],acceptDownloads:false});
    this.context=context;this.visible=visible;
-   context.on('close',()=>{if(this.context===context){this.context=null;this.stop();}});return context;
+   context.on('close',()=>{if(this.context===context){const wasRunning=this.started;this.context=null;this.stop();this.emit('stopped',{});if(wasRunning)this.emit('error','The shopping browser closed. Monitoring stopped; check order history before restarting.');}});return context;
   })();
   try{return await this.launching;}finally{this.launching=null;}
  }

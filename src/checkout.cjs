@@ -30,7 +30,7 @@ function validateRecipe(recipe,url){
  return result;
 }
 class Ledger{
- constructor(file){this.file=file;this.data={entries:{}};if(fs.existsSync(file)){this.data=JSON.parse(fs.readFileSync(file,'utf8'));if(!this.data.entries||typeof this.data.entries!=='object')throw Error('Purchase history is invalid. Restore it before enabling auto-buy.');}}
+ constructor(file){this.file=file;this.data={entries:{}};if(fs.existsSync(file)){this.data=JSON.parse(fs.readFileSync(file,'utf8'));if(!this.data.entries||typeof this.data.entries!=='object'||Array.isArray(this.data.entries)||Object.values(this.data.entries).some(e=>!e||!['attention','submitting','purchased','uncertain'].includes(e.state)||!Number.isSafeInteger(e.cents)||e.cents<0))throw Error('Purchase history is invalid. Restore it before enabling auto-buy.');}}
  save(){fs.mkdirSync(path.dirname(this.file),{recursive:true});const temp=this.file+'.tmp';fs.writeFileSync(temp,JSON.stringify(this.data,null,2),{mode:0o600});fs.renameSync(temp,this.file);}
  key(item){const u=new URL(item.url);u.hash='';return u.toString();}
  get(item){return this.data.entries[this.key(item)];}

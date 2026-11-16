@@ -24,7 +24,7 @@ function render(){
  }
 }
 async function save(){pull();state=await api.save(state);return state;}
-$('directions').onclick=()=>$('help').showModal();$('close-help').onclick=()=>$('help').close();$('close-setup').onclick=()=>$('setup').close();
+$('directions').onclick=()=>$('help').showModal();$('close-help').onclick=()=>$('help').close();$('close-setup').onclick=()=>{if(pending){$('setup-message').textContent='Finish the selection or press Esc in the store first.';return;}$('setup').close();};$('setup').addEventListener('cancel',e=>{if(pending)e.preventDefault();});
 $('practice').onclick=()=>api.practice().catch(e=>message(e.message));
 $('add-form').addEventListener('submit',async e=>{
  e.preventDefault();const old=state.products;

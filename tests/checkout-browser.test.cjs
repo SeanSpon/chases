@@ -2,7 +2,7 @@
 const {test}=require('node:test'),assert=require('node:assert/strict');
 const fs=require('node:fs'),os=require('node:os'),path=require('node:path');
 const {chromium}=require('playwright-core');
-const {findBrowser}=require('../src/monitor.cjs');
+const {findBrowser,Monitor}=require('../src/monitor.cjs');
 const {CheckoutEngine,Ledger,fingerprint}=require('../src/checkout.cjs');
 const {pick}=require('../src/setup.cjs');
 const origin='https://shop.autocart.example';
@@ -21,7 +21,7 @@ test('real Playwright checkout integration against a simulated retailer',async t
    let body='';
    if(pathname==='/product')body=options.blocked?'Verify you are human':`<h1>NeeDoh Nice Cube</h1><span id="price">${options.price||'$8.99'}</span><button id="add" onclick="location.href='/cart'">Add to cart</button>`;
    else if(pathname==='/cart'){adds++;body=`<button id="checkout" onclick="location.href='${options.redirect||'/checkout'}'">${options.earlyPay?'Place order':'Checkout'}</button>`;}
-   else if(pathname==='/checkout')body=`<span id="name">${options.wrongItem?'Different toy':'NeeDoh Nice Cube'}</span><input id="quantity" value="${options.quantity||1}"><span id="count">${options.cartCount||1}</span><span id="total">${options.total||'$12.62'}</span><button id="pay" onclick="this.disabled=true;fetch('/charge',{method:'POST'}).then(r=>r.json()).then(r=>{document.body.innerHTML=${JSON.stringify(options.noReceipt?'Payment processing':'Thank you for your order. Order number: AC-10001')}})">Place order</button>`;
+   else if(pathname==='/checkout')body=`<span id="name">${options.wrongItem?'Different toy':'NeeDoh Nice Cube'}</span><input id="quantity" value="${options.quantity||1}"><span id="count">${options.cartCount||1}</span><span id="total">${options.total||'$12.62'}</span><button id="pay" onclick="this.disabled=true;fetch('/charge',{method:'POST'}).then(r=>r.json()).then(r=>{document.body.innerHTML=${JSON.stringify(options.noReceipt?'Payment processing':'Thank you for your order. Order number: AC-10001').replaceAll('"','&quot;')}})">Place order</button>`;
    else body='Not found';
    return route.fulfill({contentType:'text/html',body:'<!doctype html><html><body>'+body+'</body></html>'});
   });
@@ -32,6 +32,10 @@ test('real Playwright checkout integration against a simulated retailer',async t
  try{
   await t.test('dry run navigates and checks totals without submitting a payment',async()=>{const f=await fixture();try{const r=await f.engine.run(f.page,f.item,limits,{dryRun:true});assert.equal(r.state,'tested');assert.equal(r.total,1262);assert.equal(f.charges(),0);assert.equal(f.adds(),1);assert.equal(f.ledger.get(f.item),undefined);}finally{await f.context.close();}});
   await t.test('auto-buy submits exactly once, finds a receipt and refuses repeats after restart',async()=>{const f=await fixture();try{const r=await f.engine.run(f.page,f.item,limits);assert.equal(r.state,'purchased');assert.equal(r.orderId,'AC-10001');assert.equal(f.charges(),1);const restarted=new CheckoutEngine(new Ledger(f.ledger.file));await assert.rejects(restarted.run(f.page,f.item,limits),/locked/);assert.equal(f.charges(),1);}finally{await f.context.close();}});
+  await t.test('restock monitoring actually dispatches armed checkout and skips purchased links',async()=>{
+   const f=await fixture(),events=[],m=new Monitor(dir,(kind,info)=>events.push({kind,info}),f.engine);m.browser=async()=>f.context;m.checkOne=async()=>({id:f.item.id,status:'possible',checkedAt:Date.now()});
+   try{await m.start([{...f.item,autoBuy:true}],1,limits);const end=Date.now()+10000;while(m.busy&&Date.now()<end)await new Promise(r=>setTimeout(r,50));assert.equal(f.charges(),1);assert.equal(f.ledger.get(f.item).state,'purchased');assert(events.some(e=>e.kind==='purchase'&&e.info.state==='purchased'));m.stop();await m.start([{...f.item,autoBuy:true}],1,limits);while(m.busy)await new Promise(r=>setTimeout(r,25));assert.equal(f.charges(),1);}finally{m.stop();await f.context.close();}
+  });
   for(const [name,opts,adjust,pattern] of [
    ['unit price cap',{price:'$99.00'},null,/item price/],
    ['tax and shipping budget',{total:'$61.00'},null,/budget/],
